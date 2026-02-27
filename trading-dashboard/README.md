@@ -40,19 +40,10 @@ You're a participant, not a spectator.
 ## Get started
 
 ```bash
-# 1. Start the backend
-./scripts/dc.sh up -d
-
-# 2. Start the frontend
-cd frontend
-npm install
-npm run dev
-
-# 3. Open Claude Code in the project root, then:
-/introduce
+claude
 ```
 
-That's it. Claude handles the rest.
+Then type `/introduce`. Claude handles the rest.
 
 ---
 
