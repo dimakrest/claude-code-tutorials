@@ -10,10 +10,9 @@ scores stocks with technical indicators, and runs on your own machine.
 
 ## How it works
 
-This course runs as Claude Code skills. You type a command, Claude enters
-teacher mode, and guides you through building the next piece of the app.
-Claude writes the code, explains what it's doing at a high level, writes
-tests alongside every component, and doesn't move on until things actually work.
+This course runs as Claude Code skills — commands that put Claude into teacher mode.
+Claude writes the code, explains what it's doing at a high level, writes tests alongside
+every component, and doesn't move on until things actually work.
 
 You're a participant, not a spectator.
 
@@ -26,6 +25,9 @@ You're a participant, not a spectator.
 /lesson-5     → Score and rank stocks
 /lesson-6     → Make it your own
 ```
+
+Claude doesn't just write code for you. It asks what you want, explains what it's doing,
+writes tests alongside the code, and checks that things actually work before moving on.
 
 ---
 

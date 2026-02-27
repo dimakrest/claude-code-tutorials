@@ -62,24 +62,6 @@ claude
 
 ---
 
-## How it works
-
-Every tutorial is structured as a set of Claude Code skills — markdown files
-that put Claude into teacher mode when you invoke them.
-
-```
-/introduce    → Claude introduces itself, sets up your environment
-/lesson-1     → First guided lesson
-/lesson-2     → Next lesson, builds on the previous
-...
-```
-
-Claude doesn't just write code for you. It asks what you want, explains what
-it's doing at a high level, writes tests alongside the code, and checks that
-things actually work before moving on. You're a participant, not a spectator.
-
----
-
 ## Contributing
 
 More tutorials coming. If you build something worth teaching, open a PR.
