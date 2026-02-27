@@ -39,10 +39,9 @@ You're a participant, not a spectator.
 
 ## Get started
 
-```bash
-claude
-/introduce
-```
+1. Open your terminal and navigate to this folder
+2. Run `claude`
+3. Type `/introduce`
 
 Claude handles the rest.
 
