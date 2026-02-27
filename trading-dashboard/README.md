@@ -41,9 +41,10 @@ You're a participant, not a spectator.
 
 ```bash
 claude
+/introduce
 ```
 
-Then type `/introduce`. Claude handles the rest.
+Claude handles the rest.
 
 ---
 
