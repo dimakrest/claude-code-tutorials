@@ -31,9 +31,8 @@ You're a participant, not a spectator.
 
 ## Prerequisites
 
-- Node.js 18+
 - Docker Desktop
-- Claude Code: `npm install -g @anthropic/claude-code`
+- Claude Code with a [Pro, Max, Teams, or Enterprise](https://claude.ai) subscription — [install guide](https://code.claude.com/docs/en/getting-started)
 
 ---
 
