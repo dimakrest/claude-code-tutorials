@@ -3,30 +3,25 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import AnalysisPage from './AnalysisPage';
 
-// Mock lightweight-charts v5 (same stub as CandlestickChart tests)
+// Mock lightweight-charts (same stub as CandlestickChart tests)
 vi.mock('lightweight-charts', () => {
   const mockSeries = {
     setData: vi.fn(),
     applyOptions: vi.fn(),
   };
-  const mockPane = {
-    setStretchFactor: vi.fn(),
-    addSeries: vi.fn(() => mockSeries),
-  };
+  const mockPriceScale = { applyOptions: vi.fn() };
   const mockTimeScale = { fitContent: vi.fn(), applyOptions: vi.fn() };
   const mockChart = {
-    addSeries: vi.fn(() => mockSeries),
-    addPane: vi.fn(() => mockPane),
-    panes: vi.fn(() => [mockPane]),
+    addCandlestickSeries: vi.fn(() => mockSeries),
+    addLineSeries: vi.fn(() => mockSeries),
+    addHistogramSeries: vi.fn(() => mockSeries),
+    priceScale: vi.fn(() => mockPriceScale),
     timeScale: vi.fn(() => mockTimeScale),
     applyOptions: vi.fn(),
     remove: vi.fn(),
   };
   return {
     createChart: vi.fn(() => mockChart),
-    CandlestickSeries: {},
-    LineSeries: {},
-    HistogramSeries: {},
     ColorType: { Solid: 'solid' },
   };
 });

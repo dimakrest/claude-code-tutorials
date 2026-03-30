@@ -1,25 +1,26 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { CandlestickChart, type OHLCVData } from './CandlestickChart';
 
-// Mock lightweight-charts v5 — requires real canvas that JSDOM doesn't provide.
+// Mock lightweight-charts — it requires a real DOM with canvas support
+// that JSDOM doesn't provide, so we stub the entire module.
 vi.mock('lightweight-charts', () => {
   const mockSeries = {
     setData: vi.fn(),
     applyOptions: vi.fn(),
   };
-  const mockPane = {
-    setStretchFactor: vi.fn(),
-    addSeries: vi.fn(() => mockSeries),
+  const mockPriceScale = {
+    applyOptions: vi.fn(),
   };
   const mockTimeScale = {
     fitContent: vi.fn(),
     applyOptions: vi.fn(),
   };
   const mockChart = {
-    addSeries: vi.fn(() => mockSeries),
-    addPane: vi.fn(() => mockPane),
-    panes: vi.fn(() => [mockPane]),
+    addCandlestickSeries: vi.fn(() => mockSeries),
+    addLineSeries: vi.fn(() => mockSeries),
+    addHistogramSeries: vi.fn(() => mockSeries),
+    priceScale: vi.fn(() => mockPriceScale),
     timeScale: vi.fn(() => mockTimeScale),
     applyOptions: vi.fn(),
     remove: vi.fn(),
@@ -27,28 +28,37 @@ vi.mock('lightweight-charts', () => {
 
   return {
     createChart: vi.fn(() => mockChart),
-    CandlestickSeries: {},
-    LineSeries: {},
-    HistogramSeries: {},
     ColorType: { Solid: 'solid' },
   };
 });
 
+// Stub getComputedStyle to return CSS variable values
 beforeAll(() => {
   vi.spyOn(window, 'getComputedStyle').mockReturnValue({
     getPropertyValue: () => '',
   } as unknown as CSSStyleDeclaration);
 });
 
-const SAMPLE_DATA: OHLCVData[] = Array.from({ length: 25 }, (_, i) => ({
-  date: `2025-01-${String(i + 1).padStart(2, '0')}`,
-  open: 100 + i,
-  high: 105 + i,
-  low: 95 + i,
-  close: 102 + i,
-  volume: 1000000,
-  ma150: i >= 149 ? 100 + i : null,
-}));
+const SAMPLE_DATA: OHLCVData[] = [
+  {
+    date: '2025-06-02',
+    open: 195.54,
+    high: 195.79,
+    low: 195.29,
+    close: 195.5,
+    volume: 45305275,
+    ma150: 194.83,
+  },
+  {
+    date: '2025-06-03',
+    open: 195.26,
+    high: 195.47,
+    low: 194.07,
+    close: 194.47,
+    volume: 43644226,
+    ma150: 194.94,
+  },
+];
 
 describe('CandlestickChart', () => {
   it('renders the chart container', () => {
@@ -62,35 +72,5 @@ describe('CandlestickChart', () => {
 
   it('renders with empty data without crashing', () => {
     expect(() => render(<CandlestickChart data={[]} />)).not.toThrow();
-  });
-
-  it('renders MA20 toggle button with aria-pressed true by default', () => {
-    render(<CandlestickChart data={SAMPLE_DATA} />);
-    const btn = screen.getByTestId('toggle-ma20');
-    expect(btn).toBeInTheDocument();
-    expect(btn).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('renders Volume toggle button with aria-pressed true by default', () => {
-    render(<CandlestickChart data={SAMPLE_DATA} />);
-    const btn = screen.getByTestId('toggle-volume');
-    expect(btn).toBeInTheDocument();
-    expect(btn).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('toggles MA20 aria-pressed when clicked', () => {
-    render(<CandlestickChart data={SAMPLE_DATA} />);
-    const btn = screen.getByTestId('toggle-ma20');
-    fireEvent.click(btn);
-    expect(btn).toHaveAttribute('aria-pressed', 'false');
-    fireEvent.click(btn);
-    expect(btn).toHaveAttribute('aria-pressed', 'true');
-  });
-
-  it('toggles Volume aria-pressed when clicked', () => {
-    render(<CandlestickChart data={SAMPLE_DATA} />);
-    const btn = screen.getByTestId('toggle-volume');
-    fireEvent.click(btn);
-    expect(btn).toHaveAttribute('aria-pressed', 'false');
   });
 });

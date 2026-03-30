@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { createChart, CandlestickSeries, LineSeries, HistogramSeries, type IChartApi, type ISeriesApi, ColorType } from 'lightweight-charts';
-import { calculateMA20 } from '@/utils/indicators';
 
 /** Shape of each data point from mock-stock-data.json */
 export interface OHLCVData {
@@ -20,7 +19,7 @@ interface CandlestickChartProps {
 
 /**
  * Two-pane financial chart:
- *   Top pane  — candlesticks + MA150 + MA20 line overlays
+ *   Top pane  — candlesticks + MA150 line overlay
  *   Bottom pane — volume histogram
  *
  * Uses CSS variables from index.css for all colors (no hardcoded hex).
@@ -30,11 +29,7 @@ export const CandlestickChart = ({ data, ticker }: CandlestickChartProps) => {
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const maSeriesRef = useRef<ISeriesApi<'Line'> | null>(null);
-  const ma20SeriesRef = useRef<ISeriesApi<'Line'> | null>(null);
   const volumeSeriesRef = useRef<ISeriesApi<'Histogram'> | null>(null);
-
-  const [ma20Visible, setMa20Visible] = useState(true);
-  const [volumeVisible, setVolumeVisible] = useState(true);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -50,7 +45,6 @@ export const CandlestickChart = ({ data, ticker }: CandlestickChartProps) => {
     const candleBullish = styles.getPropertyValue('--candle-bullish').trim();
     const candleBearish = styles.getPropertyValue('--candle-bearish').trim();
     const accentPrimary = styles.getPropertyValue('--accent-primary').trim();
-    const accentSecondary = styles.getPropertyValue('--accent-secondary').trim();
 
     const chart = createChart(container, {
       width: container.clientWidth,
@@ -130,21 +124,6 @@ export const CandlestickChart = ({ data, ticker }: CandlestickChartProps) => {
     maSeries.setData(maData);
     maSeriesRef.current = maSeries;
 
-    // -- MA20 line overlay (main pane) --
-    const ma20Values = calculateMA20(data);
-    const ma20Series = chart.addSeries(LineSeries, {
-      color: accentSecondary || '#f59e0b',
-      lineWidth: 2,
-      priceLineVisible: false,
-      crosshairMarkerVisible: false,
-    });
-
-    const ma20Data = data
-      .map((d, i) => ({ time: d.date as string, value: ma20Values[i] }))
-      .filter((d): d is { time: string; value: number } => d.value != null);
-    ma20Series.setData(ma20Data);
-    ma20SeriesRef.current = ma20Series;
-
     // -- Volume histogram (separate pane, 30% height) --
     const volumePane = chart.addPane();
     volumePane.setStretchFactor(0.3);
@@ -180,53 +159,20 @@ export const CandlestickChart = ({ data, ticker }: CandlestickChartProps) => {
       resizeObserver.disconnect();
       chart.remove();
       chartRef.current = null;
-      ma20SeriesRef.current = null;
-      volumeSeriesRef.current = null;
     };
   }, [data]);
 
-  const handleToggleMa20 = () => {
-    const next = !ma20Visible;
-    setMa20Visible(next);
-    ma20SeriesRef.current?.applyOptions({ visible: next });
-  };
-
-  const handleToggleVolume = () => {
-    const next = !volumeVisible;
-    setVolumeVisible(next);
-    volumeSeriesRef.current?.applyOptions({ visible: next });
-  };
-
   return (
     <div className="relative w-full h-full min-h-[500px]">
-      {/* Legend + toggle controls */}
-      <div className="absolute top-2 left-2 z-10 flex items-center gap-4">
+      {/* Ticker + indicator legend */}
+      <div className="absolute top-2 left-2 z-10 flex items-center gap-4 pointer-events-none">
         {ticker && (
-          <span className="font-mono font-bold text-sm text-text-primary pointer-events-none">
-            {ticker}
-          </span>
+          <span className="font-mono font-bold text-sm text-text-primary">{ticker}</span>
         )}
-        <span className="flex items-center gap-1.5 text-xs text-text-secondary pointer-events-none">
+        <span className="flex items-center gap-1.5 text-xs text-text-secondary">
           <span className="inline-block w-4 h-0.5 bg-[var(--accent-primary)]" />
           MA 150
         </span>
-        <button
-          onClick={handleToggleMa20}
-          aria-pressed={ma20Visible}
-          data-testid="toggle-ma20"
-          className={`flex items-center gap-1.5 text-xs transition-opacity ${ma20Visible ? 'opacity-100' : 'opacity-40'}`}
-        >
-          <span className="inline-block w-4 h-0.5 bg-[var(--accent-secondary)]" />
-          <span className="text-text-secondary">MA 20</span>
-        </button>
-        <button
-          onClick={handleToggleVolume}
-          aria-pressed={volumeVisible}
-          data-testid="toggle-volume"
-          className={`text-xs text-text-secondary transition-opacity ${volumeVisible ? 'opacity-100' : 'opacity-40'}`}
-        >
-          Volume
-        </button>
       </div>
       <div
         ref={containerRef}
