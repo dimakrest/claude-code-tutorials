@@ -110,3 +110,4 @@ frontend/tests/ui/viewport-matrix.spec.ts-snapshots
 gha-creds-*.json
 .docker-data/
 .playwright-mcp/
+reports/
