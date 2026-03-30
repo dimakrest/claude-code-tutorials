@@ -21,6 +21,7 @@
   /* Accent Colors */
   --accent-primary: #6366f1;  /* UI accents, active states, focus rings */
   --accent-primary-muted: rgba(99, 102, 241, 0.15);
+  --accent-secondary: #f59e0b;  /* MA20 indicator line (amber) */
   --accent-bullish: #00d26a;  /* Positive values, profits, bullish signals */
   --accent-bearish: #ff4757;  /* Negative values, losses, bearish signals */
 

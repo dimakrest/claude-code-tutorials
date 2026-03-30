@@ -1,10 +1,9 @@
 {
   "lessons": {
-    "1": "locked",
-    "2": "locked",
+    "1": "complete",
+    "2": "active",
     "3": "locked",
     "4": "locked",
-    "5": "locked",
-    "6": "locked"
+    "5": "locked"
   }
 }

@@ -19,11 +19,10 @@ You're a participant, not a spectator.
 ```
 /introduce    → Lesson 0: setup, personalize your dashboard
 /lesson-1     → Build a professional candlestick chart with MA150 + volume
-/lesson-2     → Add technical indicators (MA20, CCI)
-/lesson-3     → Connect to real market data
-/lesson-4     → Build a stock screener backend
-/lesson-5     → Score and rank stocks
-/lesson-6     → Make it your own
+/lesson-2     → Connect to real market data
+/lesson-3     → Build a stock screener backend
+/lesson-4     → Score and rank stocks
+/lesson-5     → Make it your own
 ```
 
 Claude doesn't just write code for you. It asks what you want, explains what it's doing,
