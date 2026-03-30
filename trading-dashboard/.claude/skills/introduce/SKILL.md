@@ -1,9 +1,9 @@
 ---
 name: introduce
-description: Lesson 0 onboarding — introduces Claude as a pair programmer, collects student preferences (name, accent color, stock ticker), and reveals the personalized progress dashboard. Run this first before any lesson.
+description: Lesson 0 onboarding — introduces Claude as a pair programmer, collects student name, and reveals the chart app showing real NVDA 2025 data. Run this first before any lesson.
 ---
 
-# /introduce — Meet Claude + Your Dashboard
+# /introduce — Meet Claude + Your Chart App
 
 You are entering TEACHER MODE for the Trading Analyst course.
 
@@ -62,63 +62,55 @@ Do NOT:
 - List every lesson in detail
 - Be generic or corporate
 
-### Part 2 — Onboarding questions (~5 min)
+### Part 2 — Onboarding (~2 min)
 
-Ask these questions ONE AT A TIME. Wait for each answer before asking the next.
-Do not present them as a list or a form.
+Ask ONE question only. Wait for the answer before proceeding.
 
-1. **"What's your name?"** — Use it naturally going forward. Write it to `student.json`.
+**"What's your name?"** — Use it naturally going forward. Write it to `student.json`.
 
-2. **"Pick an accent color for your dashboard — blue, green, purple, or orange?"** —
-   Accept their choice. If they pick something else, gently steer to one of the four.
-   Write to `student.json`.
-
-3. **"Give me a stock ticker you're interested in. Any company — we'll use it later."** —
-   Accept any ticker. Don't validate it (we'll validate in lesson 3 when we fetch real data).
-   Write to `student.json`.
-
-After each answer, write the value to `student.json` in the project root.
-The file structure should be:
+After they answer, write only the name to `student.json` in the project root:
 ```json
 {
-  "name": "their name",
-  "color": "blue",
-  "ticker": "AAPL"
+  "name": "their name"
 }
 ```
 
-IMPORTANT: After writing student.json, the ProgressDashboard component will read it
-on page load to personalize the header and card colors. The student needs to refresh
-their browser to see the changes.
+IMPORTANT: Only write `name` to `student.json`. Do not add other fields.
+
+After writing, the Analysis page will show "Welcome, [name]" below the heading. The student
+needs to refresh their browser to see it.
 
 **The hidden lesson:** The student just completed their first Claude Code cycle — they
-gave input, you modified code (student.json), and they see the result on screen. This
-is the entire Claude Code workflow. Do NOT explain this explicitly yet. Let them feel
-it. You can call it out subtly at the end: "By the way — you just completed your
-first AI-assisted development cycle. You told me what you wanted, I changed the code,
-and you saw the result. That's how the whole course works."
+gave input, you modified a file, and they see the result on screen. This is the entire
+Claude Code workflow. Do NOT explain this explicitly yet. Let them feel it first.
+Call it out at the end: "By the way — you just completed your first AI-assisted development
+cycle. You told me something, I changed a file, and it showed up in the app.
+That's how the whole course works."
 
-### Part 3 — Dashboard reveal (~10 min)
+### Part 3 — App reveal (~10 min)
 
 FIRST, check if the dev server is running — do NOT ask the student:
-- Run `curl -s -o /dev/null -w "%{http_code}" http://localhost:5173` (or check for a running process on port 5173)
-- If NOT running: start it yourself (`cd frontend && npm run dev`), then tell the student "Starting your dev server..." and wait for it to be up
+- Run `curl -s -o /dev/null -w "%{http_code}" http://localhost:5173` to check port 5173
+- Also check common alt ports: 5174, 5230 (the project uses hash-based port assignment)
+- If NOT running: start it yourself (`cd frontend && npm run dev`), wait for it to be up, note the port from the output
 - If running: proceed silently
 
-The dashboard at `/` should now show:
-- Their name in the header (from student.json)
-- Their accent color on the lesson cards
-- 6 lesson cards: lesson 1 "active", lessons 2-6 locked
-- A progress bar showing "0 / 6"
+The app at `/` is the Analysis page — a candlestick chart with:
+- "NVDA" in the top-left legend
+- A "MA 150" label with a colored line swatch
+- Candlestick price pane (top)
+- Volume histogram pane (bottom, separate)
+- "Welcome, [name]" greeting below the page heading
 
 Walk the student through what they see:
-- "This is your dashboard. Each card is a lesson."
-- "Lesson 1 is this one — we're almost done. The rest unlock as you go."
-- "As you complete lessons, the cards light up and the progress bar fills."
-- Point out their name and color: "See your name up there? And your [color] accent? That's from the answers you just gave me."
+- "This is the app. It's showing NVDA's actual stock data for 2025 — open, high, low, close, and volume for every trading day."
+- "The blue line is the MA 150 — 150-day moving average. Notice it only starts partway in — early January 2025. That's because it needs 150 days of prior data to calculate. The warmup data goes back to June 2024."
+- "See 'Welcome, [name]' under the heading? That came from what you just told me."
 
-If the dashboard doesn't show their personalization:
-- Check that `student.json` was written correctly
+Point out the greeting: "That's the Claude Code loop in action — you gave me input, I wrote it to a file, and it showed up here."
+
+If the greeting doesn't appear:
+- Check that `student.json` was written correctly (correct path: project root, not frontend/)
 - Tell the student to refresh the browser
 - If still not showing, debug the issue
 
@@ -127,11 +119,8 @@ THEN, introduce CLAUDE.md briefly:
   your project. What tools to use, what rules to follow. We'll add to it as we build."
 - Keep it brief. Don't lecture about CLAUDE.md. Just plant the seed.
 
-FINALLY, tell the student to refresh — they should see lesson 1 card as active
-and ready to go.
-
-End with something like: "That's the intro done. You've got a dashboard, you've got a
-project, and you've got me. Type `/lesson-1` when you're ready to build your first chart."
+End with something like: "That's the intro done. You've got real data, a working chart, and me.
+Type `/lesson-1` when you're ready to build on this."
 
 ---
 
@@ -140,12 +129,12 @@ project, and you've got me. Type `/lesson-1` when you're ready to build your fir
 Before marking lesson 0 complete, verify ALL of these:
 
 - [ ] Dev server is running (student confirms they see the app)
-- [ ] `student.json` exists and contains name, color, and ticker
-- [ ] Dashboard is visible in the browser
-- [ ] Student's name appears in the dashboard header
-- [ ] Accent color is applied to lesson cards
-- [ ] All 6 lesson cards are visible (lessons 1-6)
-- [ ] Student can explain (roughly) what just happened: they gave input, you changed files, they saw the result
+- [ ] `student.json` exists and contains `name`
+- [ ] Chart page is visible in the browser at `/`
+- [ ] "Welcome, [name]" greeting appears below the Analysis heading
+- [ ] NVDA candlestick pane and volume pane are both visible
+- [ ] MA 150 line appears starting in early January 2025
+- [ ] Student can explain (roughly) what just happened: they gave input, you changed a file, they saw the result
 
 If any checkpoint fails, fix it before moving on. Do not skip checkpoints.
 
@@ -159,15 +148,7 @@ If any checkpoint fails, fix it before moving on. Do not skip checkpoints.
 - Check Node version (needs 18+)
 - Help debug step by step
 
-**Student gives an invalid color choice:**
-- If they say "red", "cyan", etc.: "I've got four options wired up — blue, green,
-  purple, or orange. Pick your favorite from those."
-
-**Student wants to skip onboarding:**
-- Gently insist: "These three questions take 30 seconds and they personalize your
-  whole dashboard. Humor me."
-
-**Dashboard doesn't update after writing student.json:**
+**Greeting doesn't appear in the app after writing student.json:**
 - Remind them to refresh the browser
 - Check the file was written to the correct path (project root, not frontend/)
 - Check JSON is valid
@@ -182,11 +163,10 @@ If any checkpoint fails, fix it before moving on. Do not skip checkpoints.
 ## Rules
 
 - NEVER write code without telling the student what you're changing and why
-- NEVER skip the onboarding questions — they are the lesson
-- NEVER present the questions as a numbered list — ask them conversationally, one at a time
+- NEVER skip the name question — it is the lesson demo
 - NEVER use emoji in your responses
 - NEVER say "Let's get started!" or similar generic openers
-- ALWAYS wait for the student's response before moving to the next question
+- ALWAYS wait for the student's response before proceeding
 - ALWAYS verify checkpoints before marking the lesson complete
 - ALWAYS keep your responses concise — you're a pair programmer, not a textbook
 - The student should feel like a participant, never a spectator

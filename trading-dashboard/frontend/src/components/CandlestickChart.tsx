@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { createChart, type IChartApi, type ISeriesApi, ColorType } from 'lightweight-charts';
+import { createChart, CandlestickSeries, LineSeries, HistogramSeries, type IChartApi, type ISeriesApi, ColorType } from 'lightweight-charts';
 
 /** Shape of each data point from mock-stock-data.json */
 export interface OHLCVData {
@@ -9,11 +9,12 @@ export interface OHLCVData {
   low: number;
   close: number;
   volume: number;
-  ma150: number;
+  ma150: number | null;
 }
 
 interface CandlestickChartProps {
   data: OHLCVData[];
+  ticker?: string;
 }
 
 /**
@@ -23,7 +24,7 @@ interface CandlestickChartProps {
  *
  * Uses CSS variables from index.css for all colors (no hardcoded hex).
  */
-export const CandlestickChart = ({ data }: CandlestickChartProps) => {
+export const CandlestickChart = ({ data, ticker }: CandlestickChartProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
@@ -83,8 +84,11 @@ export const CandlestickChart = ({ data }: CandlestickChartProps) => {
 
     chartRef.current = chart;
 
-    // -- Candlestick series --
-    const candleSeries = chart.addCandlestickSeries({
+    // Main pane gets 70% of height
+    chart.panes()[0].setStretchFactor(0.7);
+
+    // -- Candlestick series (main pane) --
+    const candleSeries = chart.addSeries(CandlestickSeries, {
       upColor: candleBullish || '#10b981',
       downColor: candleBearish || '#ef4444',
       borderUpColor: candleBullish || '#10b981',
@@ -103,8 +107,8 @@ export const CandlestickChart = ({ data }: CandlestickChartProps) => {
     candleSeries.setData(candleData);
     candleSeriesRef.current = candleSeries;
 
-    // -- MA150 line overlay --
-    const maSeries = chart.addLineSeries({
+    // -- MA150 line overlay (main pane) --
+    const maSeries = chart.addSeries(LineSeries, {
       color: accentPrimary || '#6366f1',
       lineWidth: 2,
       priceLineVisible: false,
@@ -120,15 +124,12 @@ export const CandlestickChart = ({ data }: CandlestickChartProps) => {
     maSeries.setData(maData);
     maSeriesRef.current = maSeries;
 
-    // -- Volume histogram (separate price scale) --
-    const volumeSeries = chart.addHistogramSeries({
-      priceFormat: { type: 'volume' },
-      priceScaleId: 'volume',
-    });
+    // -- Volume histogram (separate pane, 30% height) --
+    const volumePane = chart.addPane();
+    volumePane.setStretchFactor(0.3);
 
-    chart.priceScale('volume').applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
-      drawTicks: false,
+    const volumeSeries = volumePane.addSeries(HistogramSeries, {
+      priceFormat: { type: 'volume' },
     });
 
     const volumeData = data.map((d) => ({
@@ -162,10 +163,22 @@ export const CandlestickChart = ({ data }: CandlestickChartProps) => {
   }, [data]);
 
   return (
-    <div
-      ref={containerRef}
-      data-testid="candlestick-chart"
-      className="w-full h-full min-h-[500px]"
-    />
+    <div className="relative w-full h-full min-h-[500px]">
+      {/* Ticker + indicator legend */}
+      <div className="absolute top-2 left-2 z-10 flex items-center gap-4 pointer-events-none">
+        {ticker && (
+          <span className="font-mono font-bold text-sm text-text-primary">{ticker}</span>
+        )}
+        <span className="flex items-center gap-1.5 text-xs text-text-secondary">
+          <span className="inline-block w-4 h-0.5 bg-[var(--accent-primary)]" />
+          MA 150
+        </span>
+      </div>
+      <div
+        ref={containerRef}
+        data-testid="candlestick-chart"
+        className="w-full h-full"
+      />
+    </div>
   );
 };

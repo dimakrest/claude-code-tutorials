@@ -109,3 +109,4 @@ frontend/tests/ui/viewport-matrix.spec.ts-snapshots
 .gemini/
 gha-creds-*.json
 .docker-data/
+.playwright-mcp/
